@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Task, type: :model do
-  let(:project) { FactoryBot.create(:project) }
+  let(:project) { create(:project) }
 
   it 'is valid with a name and project' do
     task = Task.new(
@@ -20,6 +20,6 @@ RSpec.describe Task, type: :model do
   it 'is invalid without a project' do
     task = FactoryBot.build(:task, project: nil)
     task.valid?
-    expect(task.errors[:project]).to include("must exist")
+    expect(task.errors[:project]).to include('must exist')
   end
 end

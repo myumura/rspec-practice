@@ -2,9 +2,9 @@ require 'rails_helper'
 
 RSpec.describe 'Projects Api', type: :request do
   it 'loads a project' do
-    user = FactoryBot.create(:user)
-    FactoryBot.create(:project, name: 'Sample Project')
-    FactoryBot.create(:project, name: 'Second Sample Project', owner: user)
+    user = create(:user)
+    create(:project, name: 'Sample Project')
+    create(:project, name: 'Second Sample Project', owner: user)
 
     get api_projects_path, params: {
       user_email: user.email,
@@ -27,23 +27,23 @@ RSpec.describe 'Projects Api', type: :request do
   end
 
   it 'creates a project' do
-    user = FactoryBot.create(:user)
+    user = create(:user)
     project_attributes = FactoryBot.attributes_for(:project)
 
-    expect {
+    expect do
       post api_projects_path, params: {
         user_email: user.email,
         user_token: user.authentication_token,
         project: project_attributes
       }
-    }.to change(user.projects, :count).by(1)
+    end.to change(user.projects, :count).by(1)
 
     expect(response).to have_http_status(:success)
   end
 
   it 'updates a project' do
-    user = FactoryBot.create(:user)
-    project = FactoryBot.create(:project, name: 'Sample Project', owner: user)
+    user = create(:user)
+    project = create(:project, name: 'Sample Project', owner: user)
     project_attributes = FactoryBot.attributes_for(:project, name: 'Updated Name')
 
     patch api_project_path(project.id), params: {
