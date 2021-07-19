@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe Project, type: :model do
   before do
-    @user = FactoryBot.create(:user)
-    @project = FactoryBot.create(:project, name: 'Test Project', owner: @user)
+    @user = create(:user)
+    @project = create(:project, name: 'Test Project', owner: @user)
   end
 
   it 'is valid with a name and description' do
@@ -28,30 +28,30 @@ RSpec.describe Project, type: :model do
   end
 
   it 'allows two users to share a project name' do
-    other_user = FactoryBot.create(:user)
+    other_user = create(:user)
     other_project = FactoryBot.build(:project, name: 'Test Project', owner: other_user)
     expect(other_project).to be_valid
   end
 
   describe 'late status' do
     it 'is late when the due date is past today' do
-      project = FactoryBot.create(:project, :due_yesterday)
+      project = create(:project, :due_yesterday)
       expect(project).to be_late
     end
 
     it 'is on time when the due date is today' do
-      project = FactoryBot.create(:project, :due_today)
+      project = create(:project, :due_today)
       expect(project).to_not be_late
     end
 
     it 'is on time when the due date is in the future' do
-      project = FactoryBot.create(:project, :due_tomorrow)
+      project = create(:project, :due_tomorrow)
       expect(project).to_not be_late
     end
   end
 
   it 'can have many notes' do
-    project = FactoryBot.create(:project, :with_notes)
+    project = create(:project, :with_notes)
     expect(project.notes.length).to eq 5
   end
 end

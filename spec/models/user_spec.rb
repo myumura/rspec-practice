@@ -30,7 +30,7 @@ RSpec.describe User, type: :model do
   end
 
   it 'is invalid with a duplicate email address' do
-    FactoryBot.create(:user, email: 'aaron@example.com')
+    create(:user, email: 'aaron@example.com')
     user = FactoryBot.build(:user, email: 'aaron@example.com')
     user.valid?
     expect(user.errors[:email]).to include('has already been taken')
@@ -42,8 +42,8 @@ RSpec.describe User, type: :model do
   end
 
   it 'does something with multiple users' do
-    user1 = FactoryBot.create(:user)
-    user2 = FactoryBot.create(:user)
+    user1 = create(:user)
+    user2 = create(:user)
     expect(true).to be_truthy
   end
 

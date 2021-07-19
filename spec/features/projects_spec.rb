@@ -1,43 +1,47 @@
 require 'rails_helper'
 
 RSpec.feature 'Projects', type: :feature do
+  let(:user) { create(:user) }
+
   scenario 'user creates a new project' do
-    user = FactoryBot.create(:user)
+    sign_in_as user
 
-    visit root_path
-    click_link 'Sign in'
-    fill_in 'Email', with: user.email
-    fill_in 'Password', with: user.password
-    click_button 'Log in'
-
-    expect {
+    expect do
       click_link 'New Project'
-      fill_in 'Name', with: 'Test Project'
-      fill_in 'Description', with: 'Trying out Capybara'
+      fill_in_with('Name', 'Test Project')
+      fill_in_with('Description', 'Trying out Capybara')
       click_button 'Create Project'
+    end.to change(user.projects, :count).by(1)
 
-      expect(page).to have_content 'Project was successfully created'
-      expect(page).to have_content 'Test Project'
-      expect(page).to have_content "Owner: #{user.name}"
-    }.to change(user.projects, :count).by(1)
+    aggregate_failures do
+      expect_to_have_content('Project was successfully created')
+      expect_to_have_content('Test Project')
+      expect_to_have_content("Owner: #{user.name}")
+    end
   end
 
-  scenario 'user update a project' do
-    user = FactoryBot.create(:user)
-    project = FactoryBot.create(:project, name: 'Test Project', owner: user)
-
+  scenario 'user updates a project' do
+    project = create(:project, name: 'Test Project', owner: user)
+    sign_in user
     visit root_path
-    click_link 'Sign in'
-    fill_in 'Email', with: user.email
-    fill_in 'Password', with: user.password
-    click_button 'Log in'
+
     click_link 'Test Project'
     visit "/projects/#{project.id}/edit"
-    fill_in 'Name', with: 'New Project'
+    fill_in_with('Name', 'New Project')
     click_button 'Update Project'
 
-    expect(page).to have_content 'Project was successfully updated'
-    expect(page).to have_content 'New Project'
-    expect(project.reload.name).to eq 'New Project'
+    aggregate_failures do
+      expect_to_have_content('Project was successfully updated')
+      expect_to_have_content('New Project')
+      expect(project.reload.name).to eq 'New Project'
+    end
+  end
+
+  def fill_in_with(label, content)
+    fill_in label, with: content
+  end
+
+  def expect_to_have_content(content)
+    expect(page).to have_content content
   end
 end
