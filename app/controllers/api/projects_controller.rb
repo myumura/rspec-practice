@@ -23,6 +23,17 @@ module Api
       end
     end
 
+    def update
+      @project = Project.find(params[:id])
+      @project.assign_attributes(project_params)
+
+      if @project.save
+        render json: @project
+      else
+        render json: { status: 'ng' }
+      end
+    end
+
     private
 
     def authenticate_user_from_token!
