@@ -34,6 +34,7 @@ end
 group :test do
   gem 'webdrivers'
   gem 'launchy', '~> 2.4.3'
+  gem 'shoulda-matchers'
 end
 
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]

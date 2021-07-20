@@ -13,10 +13,23 @@ RSpec.describe Note, type: :model do
     expect(note).to be_valid
   end
 
-  it 'is invalid without a message' do
-    note = FactoryBot.build(:note, message: nil)
-    note.valid?
-    expect(note.errors[:message]).to include("can't be blank")
+  it { is_expected.to validate_presence_of :message }
+
+  # FactoryBot使用
+  it 'delegates name to the user who created it' do
+    user = FactoryBot.create(:user, first_name: 'Fake', last_name: 'User')
+    note = Note.new(user: user)
+    expect(note.user_name).to eq 'Fake User'
+  end
+
+  # モックとスタブ使用
+  it 'delegates name to the user who created it' do
+    # 検証機能なし
+    # user = double('user', name: 'Fake User')
+    user = instance_double('User', name: 'Fake User')
+    note = Note.new
+    allow(note).to receive(:user).and_return(user)
+    expect(note.user_name).to eq 'Fake User'
   end
 
   describe 'search message for a term' do

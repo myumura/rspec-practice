@@ -32,14 +32,17 @@ RSpec.describe ProjectsController, type: :controller do
 
   describe '#show' do
     context 'as an authorized user' do
+      let(:user) { double('user') }
+      let(:project) { instance_double('Project', owner: user, id: '123') }
+
       before do
-        @user = create(:user)
-        @project = create(:project, owner: @user)
+        allow(request.env['warden']).to receive(:authenticate!).and_return(user)
+        allow(controller).to receive(:current_user).and_return(user)
+        allow(Project).to receive(:find).with('123').and_return(project)
       end
 
       it 'responds successfully' do
-        sign_in @user
-        get :show, params: { id: @project.id }
+        get :show, params: { id: project.id }
         expect(response).to be_success
       end
     end

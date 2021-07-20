@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.feature 'Tasks', type: :feature do
+RSpec.feature 'Tasks', type: :feature, slow: true do
   let(:user) { create(:user) }
   let(:project) { create(:project, name: 'RSpec tutorial', owner: user) }
   let!(:task) { project.tasks.create!(name: 'Finish RSpec tutorial') }
