@@ -1,11 +1,11 @@
 class ProjectsController < ApplicationController
-  before_action :set_project, only: %i[show edit update destroy]
-  before_action :project_owner?, except: %i[index new create]
+  before_action :set_project, only: %i[show edit update destroy complete]
+  before_action :project_owner?, except: %i[index new create completed]
 
   # GET /projects
   # GET /projects.json
   def index
-    @projects = current_user.projects
+    @projects = current_user.projects.where('completed': false || nil)
   end
 
   # GET /projects/1
@@ -58,6 +58,18 @@ class ProjectsController < ApplicationController
       format.html { redirect_to projects_url, notice: 'Project was successfully destroyed.' }
       format.json { head :no_content }
     end
+  end
+
+  def complete
+    if @project.update_attributes(completed: true)
+      redirect_to @project, notice: 'Congratulations, this project is complete!'
+    else
+      redirect_to @project, alert: 'Unable to complete project.'
+    end
+  end
+
+  def completed
+    @projects = current_user.projects.where('completed': true)
   end
 
   private

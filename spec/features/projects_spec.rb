@@ -37,6 +37,35 @@ RSpec.feature 'Projects', type: :feature do
     end
   end
 
+  scenario 'user completes a project' do
+    user = FactoryBot.create(:user)
+    project = FactoryBot.create(:project, owner: user)
+    sign_in user
+
+    visit project_path(project)
+
+    expect(page).to_not have_content 'Completed'
+
+    click_button 'Complete'
+
+    expect(project.reload.completed?).to be true
+    expect(page).to have_content 'Congratulations, this project is complete!'
+    expect(page).to have_content 'Completed'
+    expect(page).to_not have_button 'Complete'
+  end
+
+  scenario 'dashbord shows only completed projects' do
+    user = FactoryBot.create(:user)
+    FactoryBot.create(:project, name: 'Incompleted Project', owner: user)
+    FactoryBot.create(:project, :completed, owner: user)
+    sign_in user
+
+    visit root_path
+
+    expect(page).to_not have_content 'Completed Project'
+    expect(page).to have_content 'Incompleted Project'
+  end
+
   def fill_in_with(label, content)
     fill_in label, with: content
   end
